@@ -1,20 +1,21 @@
-const http = require('http'); // allows us to create a browser
+const path = require('path');
 
 const express = require('express'); // imports expressJS
+const bodyParser = require('body-parser'); // import body-parser
 
 const app = express(); // express app (implements express framework)
 
-app.use((req, res, next) => {
-    console.log("In the middleware!");
-    next(); // next is a function that is passed to the use method for the next function to execute with app.use(), chaining middleware
-}); 
+const adminRoutes = require('./routes/admin'); // import custom code
+const shopRoutes = require('./routes/shop'); // import custom code
 
-app.use((req, res, next) => {
-    console.log("In another middleware!");
-    // ... no next here because middleware ends
-    res.send('<h1>Hello from express</h1>'); // allows us to send a response, sets a html content-type automatically
-}); 
+app.use(bodyParser.urlencoded({extended: false})); // allows us to use req.body
+app.use(express.static(path.join(__dirname, 'public'))); // serve static files like css for public read access
 
-const server = http.createServer(app); // callback function to be called on each server request
+app.use('/admin', adminRoutes); // run imported code if executed with filter
+app.use(shopRoutes); // run imported code if executed
 
-server.listen(3000); // starts a process where nodeJS will keep this running for incoming requests
+app.use((req, res) => {
+    res.status(404).sendFile(path.join(__dirname, 'views', '404.html'));
+});
+
+app.listen(3000); // listen for events on port localhost port 3000
