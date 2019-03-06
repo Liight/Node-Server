@@ -4,18 +4,28 @@ const express = require('express'); // import expressJS
 
 const router = express.Router(); // set express.Router
 
-const rootDir = require('../util/path');
+const rootDir = require('../util/path'); // helper function to get path of app.js (root)
 
-// admin/add-product
+products = [];
+
+// admin/add-product => GET
 router.get('/add-product', (req, res, next) => { // use Router
-    console.log("In the middleware!");
-    res.sendFile(path.join(rootDir, 'views', 'add-product.html'))
+    // res.sendFile(path.join(rootDir, 'views', 'add-product.html'))
+    res.render('add-product', {
+        pageTitle: 'Add Product', 
+        path: '/admin/add-product',
+        formsCSS: true,
+        productCSS: true,
+        activeAddProduct: true
+    });
 }); 
 
-// admin/product
-router.post('/product', (req, res, next) => { // use Router
-    console.log(req.body);
+// admin/product => POST
+router.post('/add-product', (req, res, next) => { // use Router
+    products.push({title: req.body.title});
+    // console.log('[admin]', req.body);
     res.redirect('/');
 });
 
-module.exports = router; // export 
+exports.routes = router;
+exports.products = products;
