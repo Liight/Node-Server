@@ -4,6 +4,7 @@ const express = require('express'); // imports expressJS
 const bodyParser = require('body-parser'); // import body-parser
 
 const errorController = require('./controllers/error');
+const sequelize = require('./util/database'); 
 
 const app = express(); // express app (implements express framework)
 
@@ -22,4 +23,13 @@ app.use(shopRoutes); // open shop as the default behaviour
 
 app.use(errorController.get404);
 
-app.listen(3000); // listen for events on port localhost port 3000
+sequelize
+    .sync() // Has a look at the model definitions and creates tables for them.
+    .then(result => {
+        // console.log(result);
+        app.listen(3000); // listen for events on port localhost port 3000
+    })
+    .catch(err => {
+        console.log(err);
+    }); 
+
